@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        h2 {
+            color: #333;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+        select, input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            margin-top: 15px;
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #result {
+            margin-top: 15px;
+            font-size: 18px;
+            color: #333;
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        async function predictPrice() {
+            const numRooms = document.getElementById("num_rooms").value;
+            const area = document.getElementById("area").value;
+            
+            if (!numRooms || !area) {
+                alert("Please enter all fields.");
+                return;
+            }
+            
+            const response = await fetch("http://127.0.0.1:5000/predict", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ num_rooms: parseInt(numRooms), area: parseFloat(area) })
+            });
+            
+            const result = await response.json();
+            document.getElementById("result").innerText = result.predicted_price || result.error;
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>House Price Prediction</h2>
+        <label for="num_rooms">Number of Rooms:</label>
+        <select id="num_rooms">
+            <script>
+                for (let i = 1; i <= 10; i++) {
+                    document.write(`<option value="${i}">${i}</option>`);
+                }
+            </script>
+        </select>
+        <label for="area">Area (in square meters):</label>
+        <input type="number" id="area" required>
+        <button onclick="predictPrice()">Predict</button>
+        <h3 id="result"></h3>
+    </div>
+</body>
+</html>
